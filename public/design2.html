@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEKANI - Pendaftaran Pesantren Kilat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { display: flex; min-height: 100vh; background-color: #ffffff; }
+
+        .left-panel { width: 55%; display: flex; flex-direction: column; padding: 40px 60px; overflow-y: auto; }
+        
+        /* Layout Header Tetap 1 Baris */
+        .logo-header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; white-space: nowrap; }
+        .logo-placeholder { min-width: 50px; height: 50px; background-color: #f0f0f0; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; text-align: center; border: 1px dashed #ccc; }
+        .logo-text h1 { font-size: 18px; color: #333; font-weight: 700; }
+        .logo-text p { font-size: 12px; color: #777; }
+
+        .register-container { width: 100%; max-width: 500px; margin: 0 auto; }
+        .register-container h2 { font-size: 26px; color: #213555; margin-bottom: 5px; font-weight: 700; }
+        .register-container p.subtitle { color: #777; font-size: 14px; margin-bottom: 30px; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group.full-width { grid-column: span 2; }
+        .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px 0; border: none; border-bottom: 1px solid #ccc; font-size: 14px; outline: none; background-color: transparent; }
+        .form-group input:focus { border-bottom: 2px solid #28a745; }
+        
+        .btn-register { width: 100%; padding: 15px; background-color: #28a745; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-register:hover { background-color: #218838; }
+
+        .right-panel { width: 45%; position: relative; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f1 100%); display: flex; flex-direction: column; align-items: flex-end; padding: 40px; height: 100vh; position: sticky; top: 0; }
+        .bg-shape { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(40, 167, 69, 0.8); clip-path: polygon(0 0, 100% 0, 100% 40%, 0 80%); z-index: 1; }
+        .info-card { position: relative; z-index: 2; background-color: #28a745; width: 100%; max-width: 400px; border-radius: 12px; margin-top: auto; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .info-header { padding: 15px 20px; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .info-body { background-color: #fff; margin: 0 5px 5px 5px; border-radius: 8px; padding: 25px; }
+        .info-content { font-size: 13px; color: #111; line-height: 1.6; }
+
+        @media screen and (max-width: 992px) { body { flex-direction: column; } .left-panel, .right-panel { width: 100%; height: auto; } }
+        @media screen and (max-width: 500px) { .logo-text h1 { font-size: 14px; } .logo-text p { font-size: 10px; } .logo-placeholder { min-width: 40px; height: 40px; } }
+    </style>
+</head>
+<body>
+
+    <div class="left-panel">
+        <div class="logo-header">
+            <div class="logo-placeholder">Logo<br>TPQ</div> 
+            <div class="logo-text">
+                <h1>SISTEM INFORMASI AKADEMIK</h1>
+                <p>Taman Pendidikan Al Quran Nurul Iman</p>
+            </div>
+        </div>
+
+        <div class="register-container">
+            <h2>Formulir PEKANI</h2>
+            <p class="subtitle">Pendaftaran Pesantren Kilat TPA Nurul Iman</p>
+            
+            <form action="#">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Nama Lengkap Santri</label>
+                        <input type="text" placeholder="Masukkan nama lengkap" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Kelas</label>
+                        <input type="text" placeholder="Contoh: 4 SD" required>
+                    </div>
+                    <div class="form-group">
+                        <label>No. HP/WhatsApp</label>
+                        <input type="tel" placeholder="08xxxxxxxxx" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Alamat Domisili</label>
+                        <textarea placeholder="Masukkan alamat lengkap" required></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn-register">Daftar Sekarang</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="bg-shape"></div>
+        <div class="info-card">
+            <div class="info-header">
+                <i class="fa-solid fa-moon"></i>
+                <span>Informasi PEKANI</span>
+            </div>
+            <div class="info-body">
+                <div class="info-content">
+                    <p><strong>Ketentuan Pesantren Kilat:</strong></p>
+                    <ul>
+                        <li>Mengikuti seluruh rangkaian kegiatan.</li>
+                        <li>Membawa perlengkapan ibadah pribadi.</li>
+                        <li>Mematuhi tata tertib TPA Nurul Iman.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

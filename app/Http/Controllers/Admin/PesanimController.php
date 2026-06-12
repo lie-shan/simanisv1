@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kelas;
 use App\Models\Pendaftaran;
+use App\Models\Santri;
 use Illuminate\Http\Request;
 
 class PesanimController extends Controller
@@ -38,6 +40,7 @@ class PesanimController extends Controller
             'status' => 'nullable|in:Mendaftar,Diterima,Ditolak',
             'keterangan' => 'nullable|string',
             'foto' => 'nullable|image|max:2048',
+            'kelas' => 'nullable|string|max:10',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -50,6 +53,10 @@ class PesanimController extends Controller
         $validated['no_pendaftaran'] = $prefix . now()->format('dmY') . str_pad($lastNum + 1, 3, '0', STR_PAD_LEFT);
 
         $pendaftaran = Pendaftaran::create($validated);
+
+        if (($validated['status'] ?? 'Mendaftar') === 'Diterima') {
+            $this->buatSantri($validated);
+        }
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['success' => true, 'data' => $pendaftaran]);
@@ -82,6 +89,7 @@ class PesanimController extends Controller
             'status' => 'nullable|in:Mendaftar,Diterima,Ditolak',
             'keterangan' => 'nullable|string',
             'foto' => 'nullable|image|max:2048',
+            'kelas' => 'nullable|string|max:10',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -89,6 +97,10 @@ class PesanimController extends Controller
         }
 
         $pendaftaran->update($validated);
+
+        if (($validated['status'] ?? 'Mendaftar') === 'Diterima') {
+            $this->buatSantri($validated);
+        }
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['success' => true, 'data' => $pendaftaran]);
@@ -106,6 +118,42 @@ class PesanimController extends Controller
         }
 
         return redirect()->route('admin.pesanim')->with('success', 'Pendaftar berhasil dihapus.');
+    }
+
+    private function buatSantri(array $data): void
+    {
+        $exists = Santri::where('nama', $data['nama'])
+            ->where('tmp_lahir', $data['tmp_lahir'] ?? '')
+            ->where('tgl_lahir', $data['tgl_lahir'] ?? '')
+            ->exists();
+
+        if ($exists) return;
+
+        $kelas = $data['kelas'] ?? '';
+        if (!$kelas) return;
+        if (!Kelas::where('nama_kelas', $kelas)->exists()) return;
+
+        do {
+            $reg = str_pad(mt_rand(0, 999999999999), 12, '0', STR_PAD_LEFT);
+        } while (Santri::where('no_registrasi', $reg)->exists());
+
+        Santri::create([
+            'no_registrasi' => $reg,
+            'nama' => $data['nama'],
+            'kelas' => $kelas,
+            'jk' => $data['jk'],
+            'tmp_lahir' => $data['tmp_lahir'] ?? '',
+            'tgl_lahir' => $data['tgl_lahir'] ?? '',
+            'ortu' => $data['ortu'] ?? '',
+            'ibu' => $data['ibu'] ?? '',
+            'foto' => $data['foto'] ?? null,
+            'no_hp' => $data['no_hp'] ?? '',
+            'kampung' => $data['kampung'] ?? '',
+            'desa' => $data['desa'] ?? '',
+            'kecamatan' => $data['kecamatan'] ?? '',
+            'kabupaten' => $data['kabupaten'] ?? '',
+            'status' => 'Aktif',
+        ]);
     }
 
     public function export()

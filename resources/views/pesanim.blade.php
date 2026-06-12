@@ -410,6 +410,7 @@
             <div class="alert alert-success">
                 <i class="fa-solid fa-circle-check"></i>
                 {{ session('success') }}
+                <a href="{{ route('lacak', ['jenis' => 'PESANIM']) }}" style="color:#166534;font-weight:700;text-decoration:underline;margin-left:4px;">Lacak</a>
             </div>
             @endif
 
@@ -479,7 +480,7 @@
                 <button type="submit" class="btn-register">Daftar Sekarang</button>
 
                 <div class="login-link">
-                    Sudah terdaftar? <a href="{{ route('login') }}">Login Portal Santri</a>
+                    <a href="{{ route('lacak', ['jenis' => 'PESANIM']) }}"><i class="fa-solid fa-search"></i> Lacak Pendaftaran</a>
                 </div>
             </form>
         </div>

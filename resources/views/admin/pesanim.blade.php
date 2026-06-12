@@ -667,6 +667,15 @@
                             </div>
                         </div>
                         <div>
+                            <label class="pes-form-label">Kelas</label>
+                            <select id="formKelas" class="pes-form-input">
+                                <option value="">-- Pilih Kelas --</option>
+                                @foreach(\App\Models\Kelas::orderBy('nama_kelas')->get() as $kelas)
+                                    <option value="{{ $kelas->nama_kelas }}">{{ $kelas->nama_kelas }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
                             <label class="pes-form-label">Status</label>
                             <select id="formStatus" class="pes-form-input">
                                 <option value="Mendaftar">Mendaftar</option>
@@ -776,6 +785,7 @@
             document.getElementById('formId').value = '';
             document.getElementById('pendaftarForm').reset();
             document.getElementById('formStatus').value = 'Mendaftar';
+            document.getElementById('formKelas').value = '';
             document.getElementById('fotoPreview').style.display = 'none';
             document.getElementById('formSubmitBtn').innerHTML = '<i class="fa-solid fa-save"></i> Simpan';
             document.getElementById('formModal').style.display = 'flex';
@@ -801,6 +811,7 @@
                     document.getElementById('formKabupaten').value = p.kabupaten || '';
                     document.getElementById('formKodePos').value = p.kode_pos || '';
                     document.getElementById('formKeterangan').value = p.keterangan || '';
+                    document.getElementById('formKelas').value = p.kelas || '';
                     document.getElementById('formStatus').value = p.status || 'Mendaftar';
                     document.getElementById('formFoto').value = '';
                     document.getElementById('fotoPreview').style.display = 'none';
@@ -902,22 +913,25 @@
             formData.append('kabupaten', document.getElementById('formKabupaten').value);
             formData.append('kode_pos', document.getElementById('formKodePos').value);
             formData.append('keterangan', document.getElementById('formKeterangan').value);
+            formData.append('kelas', document.getElementById('formKelas').value);
             formData.append('status', document.getElementById('formStatus').value);
             const fotoFile = document.getElementById('formFoto').files[0];
             if (fotoFile) formData.append('foto', fotoFile);
             if (id) formData.append('_method', 'PUT');
 
             const url = id ? '/admin/pesanim/' + id : '/admin/pesanim';
-            fetch(url, { method: 'POST', body: formData })
+            fetch(url, { method: 'POST', headers: { 'Accept': 'application/json' }, body: formData })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
                         document.getElementById('formModal').style.display = 'none';
                         showToast('success', 'Berhasil!', 'Data pendaftar berhasil ' + (id ? 'diupdate' : 'disimpan') + '.');
                         setTimeout(() => location.reload(), 500);
+                    } else {
+                        showToast('error', 'Gagal!', data.message || 'Terjadi kesalahan.');
                     }
                 })
-                .catch(err => showToast('error', 'Gagal!', 'Terjadi kesalahan.'));
+                .catch(err => showToast('error', 'Gagal!', 'Terjadi kesalahan: ' + err.message));
         });
 
         // Toast

@@ -27,6 +27,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/lacak', [App\Http\Controllers\LacakController::class, 'index'])->name('lacak');
+Route::post('/lacak', [App\Http\Controllers\LacakController::class, 'cek'])->name('lacak.cek');
+
 Route::get('/pesanim', [PesanimLandingController::class, 'create'])->name('pesanim');
 Route::post('/pesanim', [PesanimLandingController::class, 'store'])->name('pesanim.store');
 

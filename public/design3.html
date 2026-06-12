@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman Hasil Seleksi SIMANIS 2026</title>
+    <style>
+        /* Pengaturan Dasar & Reset */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #72a5ba; 
+            font-family: Arial, Helvetica, sans-serif;
+            color: #ffffff;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px; 
+        }
+
+        /* ========================================================
+           Bagian Header (Di mana logo diperbesar)
+           ======================================================== */
+        .header-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 25px; /* Sedikit lebih lebar untuk menyesuaikan logo besar */
+        }
+
+        .header-section img {
+            /* --- PERUBAHAN UTAMA: Logo Desktop Jauh Lebih Besar --- */
+            width: 160px; /* Ditingkatkan dari 90px */
+            height: auto;
+            flex-shrink: 0;
+            border-radius: 50%; /* Opsional: Memastikan logo tetap bundar rapi */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Opsional: Sedikit bayangan agar menonjol */
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+            color: #104c8f;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 60px;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            line-height: 1;
+        }
+
+        .header-text p {
+            margin: 4px 0 0 0;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        /* Judul Pengumuman */
+        .page-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+
+        /* Konten Utama */
+        .content-wrapper {
+            display: flex;
+            justify-content: center; 
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .info-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        td {
+            padding: 6px 0;
+            vertical-align: top;
+        }
+
+        /* Lebar kolom label default */
+        td:nth-child(1) { width: 150px; }
+        td:nth-child(2) { width: 20px; }
+        
+        .bold-val {
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            word-break: break-word;
+        }
+
+        .congrats-text {
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .links-text {
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .links-text a {
+            color: #27a3e8; 
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .links-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Tombol Unduh */
+        .btn-download {
+            background-color: #3b9eb2;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            font-size: 14px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-download:hover {
+            background-color: #328799;
+        }
+
+        /* Tombol Kembali */
+        .btn-back {
+            background-color: #2d9f3f;
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            font-size: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-back:hover {
+            background-color: #248133;
+        }
+
+        /* ========================================================
+           MEDIA QUERIES (OPTIMASI RESPONSIVITAS DEVICE)
+           ======================================================== */
+
+        /* Tablet & HP Besar (Maksimal 768px) */
+        @media (max-width: 768px) {
+            body {
+                padding: 30px 15px;
+            }
+            .header-section img {
+                /* --- PERUBAHAN: Logo Tablet Juga Jauh Lebih Besar --- */
+                width: 130px; /* Ditingkatkan dari 75px */
+            }
+            .header-text h1 {
+                font-size: 48px;
+            }
+            .page-title {
+                font-size: 20px;
+                margin-bottom: 30px;
+            }
+        }
+
+        /* HP Sedang & Kecil (Maksimal 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 20px 12px;
+            }
+            .header-section {
+                flex-direction: column; /* Ubah ke susunan vertikal di hp sangat kecil */
+                text-align: center;
+                gap: 15px;
+                margin-bottom: 25px;
+            }
+            .header-section img {
+                /* --- PERUBAHAN: Logo HP Juga Jauh Lebih Besar --- */
+                width: 100px; /* Ditingkatkan dari 60px */
+                margin: 0 auto; /* Menengahkan logo */
+            }
+            .header-text {
+                align-items: center;
+            }
+            .header-text h1 {
+                font-size: 38px;
+                letter-spacing: -1px;
+            }
+            .header-text p {
+                font-size: 11px;
+                line-height: 1.2;
+            }
+            .page-title {
+                font-size: 16px;
+                margin-bottom: 25px;
+            }
+            table {
+                font-size: 14px;
+            }
+            td:nth-child(1) { width: 115px; } 
+            
+            .congrats-text, .links-text {
+                font-size: 13.5px;
+            }
+            .btn-download, .btn-back {
+                padding: 12px;
+                font-size: 13.5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-section">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg/200px-Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg.png" alt="Logo TPA Nurul Iman">
+        <div class="header-text">
+            <h1>SIMANIS</h1>
+            <p>Sistem Informasi Akademik TPA Nurul Iman</p>
+        </div>
+    </div>
+
+    <div class="page-title">
+        PENGUMUMAN HASIL SELEKSI SIMANIS 2026
+    </div>
+
+    <div class="content-wrapper">
+        
+        <div class="info-section">
+            <table>
+                <tr>
+                    <td>Nomor peserta</td>
+                    <td>:</td>
+                    <td class="bold-val">26 - 9990 - 010001</td>
+                </tr>
+                <tr>
+                    <td>Nama</td>
+                    <td>:</td>
+                    <td class="bold-val">NAMA CONTOH 1</td>
+                </tr>
+                <tr>
+                    <td>Tanggal lahir</td>
+                    <td>:</td>
+                    <td class="bold-val">01 - 01 - 2008</td>
+                </tr>
+            </table>
+
+            <div class="congrats-text">
+                <b>Selamat! Anda dinyatakan lulus seleksi SIMANIS 2026</b> di
+            </div>
+
+            <table>
+                <tr>
+                    <td>Lembaga</td>
+                    <td>:</td>
+                    <td class="bold-val">1999 - TPA NURUL IMAN</td>
+                </tr>
+                <tr>
+                    <td>Program Kelas</td>
+                    <td>:</td>
+                    <td class="bold-val">19991020 - KELAS TAHFIZ</td>
+                </tr>
+            </table>
+
+            <div class="links-text">
+                Persyaratan pendaftaran ulang calon santri baru dapat dilihat di <a href="#">sini</a>.
+            </div>
+            <div class="links-text">
+                Anda dapat mencetak kembali Kartu Tanda Peserta Seleksi 2026 di <a href="#">sini</a>.
+            </div>
+
+            <button class="btn-download">UNDUH PENGUMUMAN (PDF)</button>
+        </div>
+
+    </div>
+
+    <button class="btn-back">Kembali ke pencarian</button>
+
+</div>
+
+</body>
+</html>

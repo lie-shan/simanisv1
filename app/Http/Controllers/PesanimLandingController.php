@@ -38,6 +38,16 @@ class PesanimLandingController extends Controller
         $validated['kabupaten'] = $parsed['kabupaten'];
         $validated['kode_pos'] = $parsed['kode_pos'];
 
+        $existing = Pendaftaran::where('nama', $validated['nama'])
+            ->where('tmp_lahir', $validated['tmp_lahir'])
+            ->where('tgl_lahir', $validated['tgl_lahir'])
+            ->first();
+
+        if ($existing) {
+            return redirect()->route('pesanim')
+                ->with('error', 'Data anda sudah ada! No. Pendaftaran: ' . $existing->no_pendaftaran);
+        }
+
         $prefix = 'PSBNI-';
         $lastNo = Pendaftaran::where('no_pendaftaran', 'like', $prefix . now()->format('dmY') . '%')->max('no_pendaftaran');
         $lastNum = $lastNo ? (int) substr($lastNo, -3) : 0;

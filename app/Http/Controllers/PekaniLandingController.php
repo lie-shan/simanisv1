@@ -40,6 +40,16 @@ class PekaniLandingController extends Controller
 
         $validated['status'] = 'Mendaftar';
 
+        $existing = PendaftaranPekani::where('nama', $validated['nama'])
+            ->where('tmp_lahir', $validated['tmp_lahir'])
+            ->where('tgl_lahir', $validated['tgl_lahir'])
+            ->first();
+
+        if ($existing) {
+            return redirect()->route('pekani')
+                ->with('error', 'Data anda sudah ada! No. Pendaftaran: ' . $existing->no_pendaftaran);
+        }
+
         $prefix = 'PPKNI-';
         $lastNo = PendaftaranPekani::where('no_pendaftaran', 'like', $prefix . now()->format('dmY') . '%')->max('no_pendaftaran');
         $lastNum = $lastNo ? (int) substr($lastNo, -3) : 0;

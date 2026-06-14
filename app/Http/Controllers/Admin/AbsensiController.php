@@ -110,18 +110,19 @@ class AbsensiController extends Controller
         $hadir = count($grouped['hadir']);
         $persen = $total > 0 ? round(($hadir / $total) * 100, 1) : 0;
 
-        $emojiMap = ['hadir' => "\u{2705}", 'izin' => "\u{1F4E9}", 'sakit' => "\u{1F912}", 'alpha' => "\u{274C}"];
+        $emojiH = "\xE2\x9C\x85"; $emojiI = "\xF0\x9F\x93\xA9"; $emojiS = "\xF0\x9F\xA4\x92"; $emojiA = "\xE2\x9D\x8C";
         $labelMap = ['hadir' => 'Hadir', 'izin' => 'Izin', 'sakit' => 'Sakit', 'alpha' => 'Alpa'];
-        $line = "\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}";
+        $emojiMap = ['hadir' => $emojiH, 'izin' => $emojiI, 'sakit' => $emojiS, 'alpha' => $emojiA];
+        $line = str_repeat('=', 28);
 
-        $msg = "\u{1F393} LAPORAN ABSENSI KELAS \u{1F393}\n";
+        $msg = "\xF0\x9F\x8E\x93 LAPORAN ABSENSI KELAS \xF0\x9F\x8E\x93\n";
         $msg .= "$line\n";
-        $msg .= "\u{1F3E2} Kelas     : $kelas\n";
+        $msg .= "\xF0\x9F\x8F\xA2 Kelas     : $kelas\n";
         if ($request->mapel) {
-            $msg .= "\u{1F4DA} Mapel     : {$request->mapel}\n";
+            $msg .= "\xF0\x9F\x93\x9A Mapel     : {$request->mapel}\n";
         }
-        $msg .= "\u{1F4C5} Tanggal   : $tglFormat\n";
-        $msg .= "\u{1F4C8} Kehadiran : {$persen}%\n";
+        $msg .= "\xF0\x9F\x93\x85 Tanggal   : $tglFormat\n";
+        $msg .= "\xF0\x9F\x93\x88 Kehadiran : {$persen}%\n";
         $msg .= "$line\n";
 
         foreach ($labelMap as $key => $label) {
@@ -129,7 +130,7 @@ class AbsensiController extends Controller
             if (count($list) > 0) {
                 $msg .= "{$emojiMap[$key]} {$label} (" . count($list) . " Santri):\n";
                 foreach ($list as $nama) {
-                    $msg .= "  \u{2022} $nama\n";
+                    $msg .= "  - $nama\n";
                 }
                 $msg .= "\n";
             }
@@ -149,11 +150,11 @@ class AbsensiController extends Controller
         $waTerkirim = false;
         if ($fonnteKey && $phoneClean) {
             try {
-                $res = Http::timeout(10)->asForm()->post('https://api.fonnte.com/send', [
-                    'target' => $phoneClean,
-                    'message' => $msg,
-                    'countryCode' => '62',
-                ])->json();
+                $res = Http::timeout(10)
+                    ->withBody(json_encode(['target' => $phoneClean, 'message' => $msg, 'countryCode' => '62']), 'application/json')
+                    ->withHeaders(['Authorization' => $fonnteKey])
+                    ->post('https://api.fonnte.com/send')
+                    ->json();
                 $waTerkirim = ($res['status'] ?? false) === true;
             } catch (\Exception $e) {
                 // silent — fallback ke wa.me

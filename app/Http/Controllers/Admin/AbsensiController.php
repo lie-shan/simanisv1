@@ -9,6 +9,8 @@ use App\Models\MataPelajaran;
 use App\Models\Santri;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AbsensiController extends Controller
 {
@@ -144,13 +146,29 @@ class AbsensiController extends Controller
             $phoneClean = '62' . substr($phoneClean, 1);
         }
         $waUrl = '';
+        $waTerkirim = false;
         if (strlen($phoneClean) >= 10) {
             $waUrl = 'https://wa.me/' . $phoneClean . '?text=' . rawurlencode($msg);
+            $fonnteKey = Setting::getValue('fonnte_api_key', '');
+            if ($fonnteKey) {
+                try {
+                    $res = Http::timeout(10)->asForm()->post('https://api.fonnte.com/send', [
+                        'target' => $phoneClean,
+                        'message' => $msg,
+                        'countryCode' => '62',
+                    ])->json();
+                    Log::info('Fonnte response: ' . json_encode($res));
+                    $waTerkirim = ($res['status'] ?? false) === true;
+                } catch (\Exception $e) {
+                    Log::error('Fonnte error: ' . $e->getMessage());
+                }
+            }
         }
 
         return redirect()->route('admin.absensi', ['kelas' => $kelas, 'tanggal' => $tanggal])
             ->with('success', 'Absensi berhasil disimpan')
-            ->with('wa_url', $waUrl);
+            ->with('wa_url', $waUrl)
+            ->with('wa_terkirim', $waTerkirim);
     }
 
     public function qr($santriId)

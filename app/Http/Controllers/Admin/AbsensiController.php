@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
+use App\Models\Guru;
+use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\Santri;
@@ -14,12 +16,42 @@ use Illuminate\Support\Facades\Log;
 
 class AbsensiController extends Controller
 {
+    private function autoDetectJadwal($kelasDipilih, $tanggal)
+    {
+        $autoMapel = null;
+        $autoPengajar = null;
+        if (!$kelasDipilih) {
+            return [$autoMapel, $autoPengajar];
+        }
+        $kelasModel = Kelas::where('nama_kelas', $kelasDipilih)->first();
+        if (!$kelasModel) {
+            return [$autoMapel, $autoPengajar];
+        }
+        $hariIni = \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd');
+        $jadwal = Jadwal::where('kelas_id', $kelasModel->id)
+            ->where('hari', $hariIni)
+            ->with(['mataPelajaran', 'guru'])
+            ->orderBy('jam_ke')
+            ->first();
+        if ($jadwal) {
+            if ($jadwal->mataPelajaran) {
+                $autoMapel = $jadwal->mataPelajaran->nama_mapel;
+            }
+            if ($jadwal->guru) {
+                $autoPengajar = $jadwal->guru->nama;
+            }
+        }
+        return [$autoMapel, $autoPengajar];
+    }
+
     public function index(Request $request)
     {
         $kelasList = Kelas::orderBy('nama_kelas')->get();
+        $guruList = Guru::where('status', 'Aktif')->orderBy('nama')->get();
         $mapelList = MataPelajaran::orderBy('nama_mapel')->pluck('nama_mapel');
         $tanggal = $request->tanggal ?? now()->toDateString();
         $kelasDipilih = $request->kelas;
+        [$autoMapel, $autoPengajar] = $this->autoDetectJadwal($kelasDipilih, $tanggal);
 
         if ($kelasDipilih) {
             $santri = Santri::where('kelas', $kelasDipilih)
@@ -43,17 +75,19 @@ class AbsensiController extends Controller
         $qrSantri = Santri::where('kelas', $qrKelas)->where('status', 'Aktif')->orderBy('nama')->get();
 
         return view('admin.absensi', compact(
-            'kelasList', 'mapelList', 'santri', 'absensiHarian', 'tanggal', 'kelasDipilih',
-            'stats', 'tab', 'qrKelasList', 'qrKelas', 'qrSantri'
+            'kelasList', 'guruList', 'mapelList', 'santri', 'absensiHarian', 'tanggal', 'kelasDipilih',
+            'stats', 'tab', 'qrKelasList', 'qrKelas', 'qrSantri', 'autoMapel', 'autoPengajar'
         ));
     }
 
     public function filter(Request $request)
     {
         $kelasList = Kelas::orderBy('nama_kelas')->get();
+        $guruList = Guru::where('status', 'Aktif')->orderBy('nama')->get();
         $mapelList = MataPelajaran::orderBy('nama_mapel')->pluck('nama_mapel');
         $tanggal = $request->tanggal ?? now()->toDateString();
         $kelasDipilih = $request->kelas;
+        [$autoMapel, $autoPengajar] = $this->autoDetectJadwal($kelasDipilih, $tanggal);
 
         $santri = Santri::where('kelas', $kelasDipilih)
             ->where('status', 'Aktif')
@@ -72,8 +106,8 @@ class AbsensiController extends Controller
         $qrSantri = Santri::where('kelas', $qrKelas)->where('status', 'Aktif')->orderBy('nama')->get();
 
         return view('admin.absensi', compact(
-            'kelasList', 'mapelList', 'santri', 'absensiHarian', 'tanggal', 'kelasDipilih',
-            'stats', 'qrKelasList', 'qrKelas', 'qrSantri'
+            'kelasList', 'guruList', 'mapelList', 'santri', 'absensiHarian', 'tanggal', 'kelasDipilih',
+            'stats', 'qrKelasList', 'qrKelas', 'qrSantri', 'autoMapel', 'autoPengajar'
         ) + ['tab' => 'manual']);
     }
 
@@ -83,6 +117,7 @@ class AbsensiController extends Controller
             'tanggal' => 'required|date',
             'kelas' => 'required|string|max:10',
             'mapel' => 'nullable|string|max:100',
+            'pengajar' => 'nullable|string|max:100',
             'absensi' => 'required|array',
             'absensi.*.status' => 'required|in:hadir,izin,sakit,alpha',
             'absensi.*.keterangan' => 'nullable|string|max:255',
@@ -113,13 +148,16 @@ class AbsensiController extends Controller
 
         $labelMap = ['hadir' => 'HADIR', 'izin' => 'IZIN', 'sakit' => 'SAKIT', 'alpha' => 'ALPA'];
 
-        $line = str_repeat('=', 40);
+        $line = str_repeat('━', 27);
 
         $msg = "= LAPORAN ABSENSI SANTRI =\n";
         $msg .= "$line\n";
-        $msg .= "Kelas  : $kelas\n";
+        $msg .= "Kelas: $kelas\n";
         if ($request->mapel) {
-            $msg .= "Mapel  : {$request->mapel}\n";
+            $msg .= "Mapel: {$request->mapel}\n";
+        }
+        if ($request->pengajar) {
+            $msg .= "Pengajar: {$request->pengajar}\n";
         }
         $msg .= "Tanggal: $tglFormat\n";
         $msg .= "$line\n";
@@ -136,7 +174,7 @@ class AbsensiController extends Controller
         }
 
         $msg .= "$line\n";
-        $msg .= "Laporan ini dikirim secara otomatis melalui SIMANIS";
+        $msg .= "_Laporan ini dikirim secara otomatis melalui SIMANIS_";
 
         $phone = Setting::getValue('contact_phone', '');
         $phoneClean = preg_replace('/[^0-9]/', '', $phone);
@@ -216,6 +254,29 @@ class AbsensiController extends Controller
             'kelasDipilih', 'stats', 'qrKelasList', 'qrKelas', 'qrSantri',
             'tanggal', 'santri', 'absensiHarian'
         ) + ['tab' => 'recap']);
+    }
+
+    public function getPengajar(Request $request)
+    {
+        $kelas = $request->kelas;
+        $mapel = $request->mapel;
+        if (!$kelas || !$mapel) {
+            return response()->json(['pengajar' => '']);
+        }
+        $kelasModel = Kelas::where('nama_kelas', $kelas)->first();
+        if (!$kelasModel) {
+            return response()->json(['pengajar' => '']);
+        }
+        $mapelModel = MataPelajaran::where('nama_mapel', $mapel)->first();
+        if (!$mapelModel) {
+            return response()->json(['pengajar' => '']);
+        }
+        $jadwal = Jadwal::where('kelas_id', $kelasModel->id)
+            ->where('mata_pelajaran_id', $mapelModel->id)
+            ->with('guru')
+            ->first();
+        $nama = ($jadwal && $jadwal->guru) ? $jadwal->guru->nama : '';
+        return response()->json(['pengajar' => $nama]);
     }
 
     private function getStats($tanggal)

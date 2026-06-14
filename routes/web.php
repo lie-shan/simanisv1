@@ -91,6 +91,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
     Route::get('/absensi/qr/{santri}', [AbsensiController::class, 'qr'])->name('absensi.qr');
     Route::get('/absensi/recap', [AbsensiController::class, 'recap'])->name('absensi.recap');
+    Route::get('/absensi/get-pengajar', [AbsensiController::class, 'getPengajar'])->name('absensi.get-pengajar');
 
     Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal');
     Route::post('/jadwal', [JadwalController::class, 'store'])->name('jadwal.store');

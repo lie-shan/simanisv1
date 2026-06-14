@@ -274,15 +274,24 @@
         <input type="hidden" name="kelas" value="{{ $kelasDipilih }}">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
             <div style="display:flex;align-items:center;gap:8px;">
-                <label style="font-size:12px;font-weight:600;color:var(--a-text-secondary);text-transform:uppercase;letter-spacing:.4px;"><i class="fa-solid fa-book"></i> Mapel</label>
-                <select name="mapel" class="a-filter-select" style="min-width:160px;">
-                    <option value="">-- Pilih Mapel --</option>
-                    @foreach($mapelList as $m)
-                    <option value="{{ $m }}">{{ $m }}</option>
+                <label style="font-size:12px;font-weight:600;color:var(--a-text-secondary);text-transform:uppercase;letter-spacing:.4px;"><i class="fa-solid fa-chalkboard-user"></i> Pengajar</label>
+                <input type="hidden" name="pengajar" id="pengajar-input" value="{{ $autoPengajar ?? '' }}">
+                <select id="pengajar-select" class="a-filter-select" style="min-width:160px;background:#e9ecef;cursor:not-allowed;" disabled>
+                    <option value="">-- Otomatis dari Jadwal --</option>
+                    @foreach($guruList as $g)
+                    <option value="{{ $g->nama }}" {{ isset($autoPengajar) && $autoPengajar == $g->nama ? 'selected' : '' }}>{{ $g->nama }}</option>
                     @endforeach
                 </select>
             </div>
-            <div style="font-size:11px;color:var(--a-text-secondary);"><i class="fa-solid fa-info-circle"></i> Mapel opsional untuk laporan WhatsApp</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-size:12px;font-weight:600;color:var(--a-text-secondary);text-transform:uppercase;letter-spacing:.4px;"><i class="fa-solid fa-book"></i> Mapel</label>
+                <select name="mapel" class="a-filter-select" style="min-width:160px;" onchange="getPengajar(this.value)">
+                    <option value="">-- Pilih Mapel --</option>
+                    @foreach($mapelList as $m)
+                    <option value="{{ $m }}" {{ isset($autoMapel) && $autoMapel == $m ? 'selected' : '' }}>{{ $m }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
         <div class="a-card">
             <div class="a-card-header">
@@ -495,6 +504,32 @@
 
 <script src="{{ asset('assets/html5-qrcode.min.js') }}" type="text/javascript"></script>
 <script>
+function getPengajar(mapel) {
+    var sel = document.getElementById('pengajar-select');
+    var hid = document.getElementById('pengajar-input');
+    if (!mapel) {
+        if (sel) { sel.selectedIndex = 0; }
+        if (hid) { hid.value = ''; }
+        return;
+    }
+    var kelas = document.querySelector('input[name="kelas"]')?.value;
+    if (!kelas) return;
+    fetch('{{ route("admin.absensi.get-pengajar") }}?kelas=' + encodeURIComponent(kelas) + '&mapel=' + encodeURIComponent(mapel))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (sel && d.pengajar) {
+                sel.value = d.pengajar;
+            }
+            if (hid) {
+                hid.value = d.pengajar || '';
+            }
+        });
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var ms = document.querySelector('select[name="mapel"]');
+    if (ms && ms.value) { getPengajar(ms.value); }
+});
+
 // Auto-hide toast
 var toastContainer = document.getElementById('toastContainer');
 if (toastContainer) {

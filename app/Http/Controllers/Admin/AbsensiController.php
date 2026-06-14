@@ -113,14 +113,16 @@ class AbsensiController extends Controller
 
         $labelMap = ['hadir' => 'HADIR', 'izin' => 'IZIN', 'sakit' => 'SAKIT', 'alpha' => 'ALPA'];
 
+        $line = str_repeat('=', 40);
+
         $msg = "= LAPORAN ABSENSI SANTRI =\n";
-        $msg .= str_repeat('=', 27) . "\n";
+        $msg .= "$line\n";
         $msg .= "Kelas  : $kelas\n";
         if ($request->mapel) {
             $msg .= "Mapel  : {$request->mapel}\n";
         }
         $msg .= "Tanggal: $tglFormat\n";
-        $msg .= str_repeat('=', 27) . "\n";
+        $msg .= "$line\n";
 
         foreach ($labelMap as $key => $label) {
             $list = $grouped[$key];
@@ -133,7 +135,7 @@ class AbsensiController extends Controller
             }
         }
 
-        $msg .= str_repeat('=', 27) . "\n";
+        $msg .= "$line\n";
         $msg .= "Laporan ini dikirim secara otomatis melalui SIMANIS";
 
         $phone = Setting::getValue('contact_phone', '');

@@ -145,9 +145,9 @@ class AbsensiController extends Controller
         if (str_starts_with($phoneClean, '0')) {
             $phoneClean = '62' . substr($phoneClean, 1);
         }
-        $waUrl = '';
         $waTerkirim = false;
-        if (strlen($phoneClean) >= 10) {
+        $waUrl = 'https://wa.me/?text=' . rawurlencode($msg);
+        if (strlen($phoneClean) >= 6) {
             $waUrl = 'https://wa.me/' . $phoneClean . '?text=' . rawurlencode($msg);
             $fonnteKey = Setting::getValue('fonnte_api_key', '');
             if ($fonnteKey) {

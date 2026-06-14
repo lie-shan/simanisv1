@@ -110,26 +110,26 @@ class AbsensiController extends Controller
         $hadir = count($grouped['hadir']);
         $persen = $total > 0 ? round(($hadir / $total) * 100, 1) : 0;
 
-        $emojiMap = ['hadir' => '✅', 'izin' => '📩', 'sakit' => '🤒', 'alpha' => '❌'];
-        $labelMap = ['hadir' => 'Hadir', 'izin' => 'Izin', 'sakit' => 'Sakit', 'alpha' => 'Alpa'];
-        $line = '━━━━━━━━━━━━━━━━━━━━━━━━━━';
+        $labelMap = ['hadir' => 'HADIR', 'izin' => 'IZIN', 'sakit' => 'SAKIT', 'alpha' => 'ALPA'];
+        $line = '==========================';
 
-        $msg = "🎓 LAPORAN ABSENSI KELAS 🎓\n";
+        $msg = "LAPORAN ABSENSI KELAS\n";
         $msg .= "$line\n";
-        $msg .= "🏢 Kelas     : $kelas\n";
+        $msg .= "Kelas     : $kelas\n";
         if ($request->mapel) {
-            $msg .= "📚 Mapel     : {$request->mapel}\n";
+            $msg .= "Mapel     : {$request->mapel}\n";
         }
-        $msg .= "📅 Tanggal   : $tglFormat\n";
-        $msg .= "📈 Kehadiran : {$persen}%\n";
+        $msg .= "Tanggal   : $tglFormat\n";
+        $msg .= "Kehadiran : {$persen}%\n";
         $msg .= "$line\n";
 
+        $simbolMap = ['hadir' => 'V', 'izin' => '>', 'sakit' => '!', 'alpha' => 'X'];
         foreach ($labelMap as $key => $label) {
             $list = $grouped[$key];
             if (count($list) > 0) {
-                $msg .= "{$emojiMap[$key]} {$label} (" . count($list) . " Santri):\n";
+                $msg .= "[{$simbolMap[$key]}] {$label} (" . count($list) . " Santri):\n";
                 foreach ($list as $nama) {
-                    $msg .= "  • $nama\n";
+                    $msg .= "  - $nama\n";
                 }
                 $msg .= "\n";
             }

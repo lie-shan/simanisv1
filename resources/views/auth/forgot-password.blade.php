@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Lupa Password — {{ $appShort ?? 'SIMANIS' }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">
     @php
         $appLogo = \App\Models\Setting::getValue('app_logo');
         $appShort = \App\Models\Setting::getValue('app_short_name', 'SIMANIS');
@@ -16,7 +14,7 @@
         $pengumuman = \App\Models\Pengumuman::where('status', 'aktif')->latest()->first();
     @endphp
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
 
         body {
             display: flex;

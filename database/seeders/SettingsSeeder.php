@@ -23,6 +23,7 @@ class SettingsSeeder extends Seeder
             ['key' => 'contact_phone', 'group' => 'contact', 'type' => 'text', 'label' => 'No. Telepon', 'value' => '08xxxxxxxxxx'],
             ['key' => 'contact_email', 'group' => 'contact', 'type' => 'email', 'label' => 'Email', 'value' => 'info@tpanuruliman.sch.id'],
             ['key' => 'contact_website', 'group' => 'contact', 'type' => 'text', 'label' => 'Website', 'value' => 'https://tpanuruliman.sch.id'],
+            ['key' => 'fonnte_api_key', 'group' => 'contact', 'type' => 'text', 'label' => 'Fonnte API Key (WhatsApp Gateway)', 'value' => '', 'description' => 'Isi jika ingin auto-kirim WhatsApp. Dapatkan gratis di https://fonnte.com'],
 
             // Academic
             ['key' => 'academic_year', 'group' => 'academic', 'type' => 'text', 'label' => 'Tahun Ajaran Aktif', 'value' => '2025/2026'],

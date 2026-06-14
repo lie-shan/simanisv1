@@ -9,6 +9,7 @@ use App\Models\MataPelajaran;
 use App\Models\Santri;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class AbsensiController extends Controller
 {
@@ -105,29 +106,37 @@ class AbsensiController extends Controller
 
         $tglFormat = \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY');
 
-        $msg = "= LAPORAN ABSENSI SANTRI =\n";
-        $msg .= "==========================\n";
-        $msg .= "Kelas  : $kelas\n";
-        if ($request->mapel) {
-            $msg .= "Mapel  : {$request->mapel}\n";
-        }
-        $msg .= "Tanggal: $tglFormat\n";
-        $msg .= "==========================\n";
+        $total = count($request->absensi);
+        $hadir = count($grouped['hadir']);
+        $persen = $total > 0 ? round(($hadir / $total) * 100, 1) : 0;
 
-        $labelMap = ['hadir' => 'HADIR', 'izin' => 'IZIN', 'sakit' => 'SAKIT', 'alpha' => 'ALPHA'];
+        $emojiMap = ['hadir' => '✅', 'izin' => '📩', 'sakit' => '🤒', 'alpha' => '❌'];
+        $labelMap = ['hadir' => 'Hadir', 'izin' => 'Izin', 'sakit' => 'Sakit', 'alpha' => 'Alpa'];
+        $line = '━━━━━━━━━━━━━━━━━━━━━━━━━━';
+
+        $msg = "🎓 LAPORAN ABSENSI KELAS 🎓\n";
+        $msg .= "$line\n";
+        $msg .= "🏢 Kelas     : $kelas\n";
+        if ($request->mapel) {
+            $msg .= "📚 Mapel     : {$request->mapel}\n";
+        }
+        $msg .= "📅 Tanggal   : $tglFormat\n";
+        $msg .= "📈 Kehadiran : {$persen}%\n";
+        $msg .= "$line\n";
+
         foreach ($labelMap as $key => $label) {
             $list = $grouped[$key];
             if (count($list) > 0) {
-                $msg .= "[$label (" . count($list) . ")]\n";
+                $msg .= "{$emojiMap[$key]} {$label} (" . count($list) . " Santri):\n";
                 foreach ($list as $nama) {
-                    $msg .= " > $nama\n";
+                    $msg .= "  • $nama\n";
                 }
                 $msg .= "\n";
             }
         }
 
-        $msg .= "==========================\n";
-        $msg .= "_Laporan ini dikirim secara otomatis melalui SIMANIS_";
+        $msg .= "$line\n";
+        $msg .= "Laporan ini dikirim secara otomatis melalui sistem.";
 
         $phone = Setting::getValue('contact_phone', '');
         $phoneClean = preg_replace('/[^0-9]/', '', $phone);
@@ -136,9 +145,25 @@ class AbsensiController extends Controller
         }
         $waUrl = 'https://wa.me/' . $phoneClean . '?text=' . urlencode($msg);
 
+        $fonnteKey = Setting::getValue('fonnte_api_key', '');
+        $waTerkirim = false;
+        if ($fonnteKey && $phoneClean) {
+            try {
+                $res = Http::timeout(10)->asForm()->post('https://api.fonnte.com/send', [
+                    'target' => $phoneClean,
+                    'message' => $msg,
+                    'countryCode' => '62',
+                ])->json();
+                $waTerkirim = ($res['status'] ?? false) === true;
+            } catch (\Exception $e) {
+                // silent — fallback ke wa.me
+            }
+        }
+
         return redirect()->route('admin.absensi', ['kelas' => $kelas, 'tanggal' => $tanggal])
             ->with('success', 'Absensi berhasil disimpan')
-            ->with('wa_url', $waUrl);
+            ->with('wa_url', $waUrl)
+            ->with('wa_terkirim', $waTerkirim);
     }
 
     public function qr($santriId)

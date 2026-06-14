@@ -212,7 +212,7 @@
     </div>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('assets/chart.js') }}"></script>
     <script>
         const isDark = false;
         const textColor = '#6b7280';

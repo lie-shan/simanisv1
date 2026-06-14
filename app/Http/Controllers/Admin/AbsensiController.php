@@ -110,26 +110,26 @@ class AbsensiController extends Controller
         $hadir = count($grouped['hadir']);
         $persen = $total > 0 ? round(($hadir / $total) * 100, 1) : 0;
 
-        $labelMap = ['hadir' => 'HADIR', 'izin' => 'IZIN', 'sakit' => 'SAKIT', 'alpha' => 'ALPA'];
-        $line = '==========================';
+        $emojiMap = ['hadir' => "\u{2705}", 'izin' => "\u{1F4E9}", 'sakit' => "\u{1F912}", 'alpha' => "\u{274C}"];
+        $labelMap = ['hadir' => 'Hadir', 'izin' => 'Izin', 'sakit' => 'Sakit', 'alpha' => 'Alpa'];
+        $line = "\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}";
 
-        $msg = "LAPORAN ABSENSI KELAS\n";
+        $msg = "\u{1F393} LAPORAN ABSENSI KELAS \u{1F393}\n";
         $msg .= "$line\n";
-        $msg .= "Kelas     : $kelas\n";
+        $msg .= "\u{1F3E2} Kelas     : $kelas\n";
         if ($request->mapel) {
-            $msg .= "Mapel     : {$request->mapel}\n";
+            $msg .= "\u{1F4DA} Mapel     : {$request->mapel}\n";
         }
-        $msg .= "Tanggal   : $tglFormat\n";
-        $msg .= "Kehadiran : {$persen}%\n";
+        $msg .= "\u{1F4C5} Tanggal   : $tglFormat\n";
+        $msg .= "\u{1F4C8} Kehadiran : {$persen}%\n";
         $msg .= "$line\n";
 
-        $simbolMap = ['hadir' => 'V', 'izin' => '>', 'sakit' => '!', 'alpha' => 'X'];
         foreach ($labelMap as $key => $label) {
             $list = $grouped[$key];
             if (count($list) > 0) {
-                $msg .= "[{$simbolMap[$key]}] {$label} (" . count($list) . " Santri):\n";
+                $msg .= "{$emojiMap[$key]} {$label} (" . count($list) . " Santri):\n";
                 foreach ($list as $nama) {
-                    $msg .= "  - $nama\n";
+                    $msg .= "  \u{2022} $nama\n";
                 }
                 $msg .= "\n";
             }
@@ -143,7 +143,7 @@ class AbsensiController extends Controller
         if (str_starts_with($phoneClean, '0')) {
             $phoneClean = '62' . substr($phoneClean, 1);
         }
-        $waUrl = 'https://wa.me/' . $phoneClean . '?text=' . urlencode($msg);
+        $waUrl = 'https://wa.me/' . $phoneClean . '?text=' . rawurlencode($msg);
 
         $fonnteKey = Setting::getValue('fonnte_api_key', '');
         $waTerkirim = false;

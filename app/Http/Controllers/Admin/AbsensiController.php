@@ -9,7 +9,6 @@ use App\Models\MataPelajaran;
 use App\Models\Santri;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class AbsensiController extends Controller
 {
@@ -144,27 +143,14 @@ class AbsensiController extends Controller
         if (str_starts_with($phoneClean, '0')) {
             $phoneClean = '62' . substr($phoneClean, 1);
         }
-        $waUrl = 'https://wa.me/' . $phoneClean . '?text=' . rawurlencode($msg);
-
-        $fonnteKey = Setting::getValue('fonnte_api_key', '');
-        $waTerkirim = false;
-        if ($fonnteKey && $phoneClean) {
-            try {
-                $res = Http::timeout(10)
-                    ->withBody(json_encode(['target' => $phoneClean, 'message' => $msg, 'countryCode' => '62']), 'application/json')
-                    ->withHeaders(['Authorization' => $fonnteKey])
-                    ->post('https://api.fonnte.com/send')
-                    ->json();
-                $waTerkirim = ($res['status'] ?? false) === true;
-            } catch (\Exception $e) {
-                // silent — fallback ke wa.me
-            }
+        $waUrl = '';
+        if (strlen($phoneClean) >= 10) {
+            $waUrl = 'https://wa.me/' . $phoneClean . '?text=' . rawurlencode($msg);
         }
 
         return redirect()->route('admin.absensi', ['kelas' => $kelas, 'tanggal' => $tanggal])
             ->with('success', 'Absensi berhasil disimpan')
-            ->with('wa_url', $waUrl)
-            ->with('wa_terkirim', $waTerkirim);
+            ->with('wa_url', $waUrl);
     }
 
     public function qr($santriId)

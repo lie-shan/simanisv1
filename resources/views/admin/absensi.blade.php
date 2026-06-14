@@ -172,9 +172,7 @@
             <div class="a-toast-title">Berhasil</div>
             <div class="a-toast-msg">{{ session('success') }}</div>
         </div>
-        @if(session('wa_terkirim'))
-        <div style="display:flex;align-items:center;gap:6px;color:#059669;font-size:13px;font-weight:600;white-space:nowrap;margin-right:4px;"><i class="fa-brands fa-whatsapp"></i> Terkirim</div>
-        @elseif(session('wa_url'))
+        @if(session('wa_url'))
         <a href="{{ session('wa_url') }}" target="_blank" class="a-btn a-btn-green a-btn-sm" style="text-decoration:none;white-space:nowrap;margin-right:4px;"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
         @endif
         <button class="a-toast-close" onclick="this.parentElement.remove()">&times;</button>

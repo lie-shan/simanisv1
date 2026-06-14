@@ -111,34 +111,30 @@ class AbsensiController extends Controller
         $hadir = count($grouped['hadir']);
         $persen = $total > 0 ? round(($hadir / $total) * 100, 1) : 0;
 
-        $emojiH = "\xE2\x9C\x85"; $emojiI = "\xF0\x9F\x93\xA9"; $emojiS = "\xF0\x9F\xA4\x92"; $emojiA = "\xE2\x9D\x8C";
-        $labelMap = ['hadir' => 'Hadir', 'izin' => 'Izin', 'sakit' => 'Sakit', 'alpha' => 'Alpa'];
-        $emojiMap = ['hadir' => $emojiH, 'izin' => $emojiI, 'sakit' => $emojiS, 'alpha' => $emojiA];
-        $line = str_repeat('=', 28);
+        $labelMap = ['hadir' => 'HADIR', 'izin' => 'IZIN', 'sakit' => 'SAKIT', 'alpha' => 'ALPA'];
 
-        $msg = "\xF0\x9F\x8E\x93 LAPORAN ABSENSI KELAS \xF0\x9F\x8E\x93\n";
-        $msg .= "$line\n";
-        $msg .= "\xF0\x9F\x8F\xA2 Kelas     : $kelas\n";
+        $msg = "= LAPORAN ABSENSI SANTRI =\n";
+        $msg .= str_repeat('=', 27) . "\n";
+        $msg .= "Kelas  : $kelas\n";
         if ($request->mapel) {
-            $msg .= "\xF0\x9F\x93\x9A Mapel     : {$request->mapel}\n";
+            $msg .= "Mapel  : {$request->mapel}\n";
         }
-        $msg .= "\xF0\x9F\x93\x85 Tanggal   : $tglFormat\n";
-        $msg .= "\xF0\x9F\x93\x88 Kehadiran : {$persen}%\n";
-        $msg .= "$line\n";
+        $msg .= "Tanggal: $tglFormat\n";
+        $msg .= str_repeat('=', 27) . "\n";
 
         foreach ($labelMap as $key => $label) {
             $list = $grouped[$key];
             if (count($list) > 0) {
-                $msg .= "{$emojiMap[$key]} {$label} (" . count($list) . " Santri):\n";
+                $msg .= "[$label (" . count($list) . ")]\n";
                 foreach ($list as $nama) {
-                    $msg .= "  - $nama\n";
+                    $msg .= " > $nama\n";
                 }
                 $msg .= "\n";
             }
         }
 
-        $msg .= "$line\n";
-        $msg .= "Laporan ini dikirim secara otomatis melalui sistem.";
+        $msg .= str_repeat('=', 27) . "\n";
+        $msg .= "Laporan ini dikirim secara otomatis melalui SIMANIS";
 
         $phone = Setting::getValue('contact_phone', '');
         $phoneClean = preg_replace('/[^0-9]/', '', $phone);
